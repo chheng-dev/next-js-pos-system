@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
+@import "./values.scss";
+@import "./responsives.scss";
+
+body {
+  font-family: "SUSE", sans-serif;
+  font-weight: 400;
+  background-color: $secondary;
+  color: white;
+}
+
+input{
+  outline: none;
+}
+
+input::placeholder{
+  font-size: 11px;
+}
+.sidebar-content {
+  background-color: #292D2C;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  color: white;
+}
+
+.header {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.mainContent {
+  margin-top: 72px;
+  overflow-y: auto;
+}
+
+// .navigation {
+//   margin-top: 72px;
+// }
+
+.text-custom-pink {
+  color: $color-prink;
+}
+.bg-custom-pink{
+  background-color: $color-prink;
+}
+
+.icon-circle {
+  background-color: white;
+  border-radius: 50%;
+}
+
+.popular-item-image {
+  width: 45px;
+  height: 45px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bg-content1{
+  background: #292D2C;
+}
+
+.bg-default-100{
+  // background-color: #292D2C;
+}
+
+.right-modal .nextui-modal-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+.right-modal .nextui-modal {
+  margin-right: 0;
+  margin-left: auto;
+}
