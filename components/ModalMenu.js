@@ -50,7 +50,14 @@ export default function ModalMenu({ isOpen, onClose }) {
   }
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose} className="bg-secondary-400 h-[90%]" size="5-xl">
+    <Modal 
+      isOpen={isOpen} 
+      onOpenChange={onClose} 
+      classNames={{
+        backdrop: "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20 "
+      }}
+      size="5-xl"
+    >
       <ModalContent>
         {(onClose) => (
           <>

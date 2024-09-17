@@ -10,11 +10,17 @@ export default function CategoryItem({icon, title, qty, isActive, onClick}){
     >
       <div className={`lg:w-32 w-full rounded-md p-2 ${isActive ? 'bg-customPrink-400' : 'bg-secondary-400'}`}>
         <div className="flex justify-end">
-          <Icon className={`w-6 h-6 ${isActive ? 'text-secondary-400' : "text-customPrink-400"}`}/>
+          <Image 
+            src={icon} 
+            className={`w-6 h-6 ${isActive ? 'text-secondary-400' : "text-customPrink-400"}`}
+            alt="Description of the image"
+            width={500} 
+            height={300} 
+          />
         </div>
         <div className='block mt-3'>
           <p className={`text-sm ${isActive ? 'text-secondary-400' : "text-white"}`}>{title}</p>
-          <span className={`text-xs  ${isActive ? 'text-secondary-400' : "text-gray-300 "}`}>{qty}</span>
+          <span className={`text-xs  ${isActive ? 'text-secondary-400' : "text-gray-300 "}`}>{100}</span>
         </div>
       </div>
     </div>

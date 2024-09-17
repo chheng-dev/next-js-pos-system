@@ -2,15 +2,20 @@ import React from "react";
 import {Textarea} from "@nextui-org/react";
 
 
-export default function TextareaField({label, placeholder, items}) {
+export default function TextareaField({label, placeholder, register, value, onChange, name, ...rest}) {
   return(
-    <Textarea
-      key="flat"
-      variant="flat"
-      label={label}
-      labelPlacement="outside"
-      placeholder={placeholder}
-      className="col-span-12 md:col-span-6 mb-6 md:mb-0"
-    />
+    <div className="mb-3">
+      <Textarea
+        key="flat"
+        variant="flat"
+        label={label}
+        labelPlacement="outside"
+        placeholder={placeholder}
+        className="col-span-12 md:col-span-6 md:mb-0"
+        value={value}
+        onChange={onChange}
+        name={name}
+      />
+    </div>
   )
 }
