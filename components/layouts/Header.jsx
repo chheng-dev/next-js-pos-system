@@ -40,9 +40,9 @@ function Header() {
         </div>
         <div className='lg:hidden block'>
           <Image
-            src={hamburgerMenu} // Ensure the `hamburgerMenu` path is correct
-            className="lg:w-6 lg:h-6 w-8 h-8 text-white"
-            alt="Menu" // Always provide alt text
+            src={hamburgerMenu} 
+            className="lg:w-6 lg:h-6 w-8 h-8 text-white cursor-pointer"
+            alt="Menu"
             onClick={handleModalClick}
           />
           <ModalMenu isOpen={isModalOpen} onClose={handleModalClose} />

@@ -7,7 +7,7 @@
 @import "./responsives.scss";
 
 body {
-  font-family: "SUSE", sans-serif;
+  font-family: "SUSE", sans-serif !important;
   font-weight: 400;
   background-color: $secondary;
   color: white;
@@ -79,4 +79,10 @@ input::placeholder{
 .right-modal .nextui-modal {
   margin-right: 0;
   margin-left: auto;
+}
+.EZDrawer__container {
+  background-color: #292D2C !important;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  padding: 14px;
 }
