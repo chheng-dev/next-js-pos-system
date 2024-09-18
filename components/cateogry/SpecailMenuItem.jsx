@@ -79,6 +79,13 @@ class SpecialMenuItem extends Component {
       description,
       slug
     }
+
+    if (!title.trim()) {
+      toast.error("Title is required.");
+      return; 
+    }
+
+      
     try {
       this.setState({ loading: true });
       const response = await fetch("http://localhost:3000/api/menus", {
@@ -112,7 +119,7 @@ class SpecialMenuItem extends Component {
 
   render() {
     const { isOpen, loading, tabItems, form } = this.state;
-
+    
     return (
       <div className="lg:mt-16 mt-4">
         <div className="flex items-center justify-between">
@@ -149,6 +156,7 @@ class SpecialMenuItem extends Component {
                 name="title"
                 value={form.title}
                 onChange={this.handleInputChange}
+                isRequired={true}
               />
             </div>
 

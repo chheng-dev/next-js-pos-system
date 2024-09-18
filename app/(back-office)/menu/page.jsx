@@ -84,28 +84,29 @@ class Page extends Component {
 
         {/* Category Item */}
         <div className="lg:flex grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-        {this.state.loading ? (
-          Array.from({ length: 7 }).map((_, idx) => (
-            <Skeleton
-              key={idx} // Add a unique key for each Skeleton item
-              animate="true"
-              css={{ borderRadius: "$md" }}
-              className="bg-secondary-400 rounded-md"
-              style={{height: '100px'}}
-            />
-          ))
-        ) : (
-          items.map((item, idx) => (
-            <CategoryItem
-              key={idx} // Ensure a unique key for each CategoryItem
-              title={item.title}
-              icon={item.icon}
-              qty={item.qty}
-              isActive={activeTab === idx}
-              onClick={() => this.handleTabClick(idx)}
-            />
-          ))
-        )}
+          {this.state.loading ? ( 
+            items.map((item, idx) => (
+              <div key={idx}>
+                <Skeleton
+                  animate={true}
+                  css={{ borderRadius: "$md" }}
+                  style={{ height: '100px' }}
+                  className="bg-secondary-400 rounded-md"
+                />
+              </div>
+            ))
+          ) : (
+            items && items.map((item, idx) => (
+              <CategoryItem
+                key={idx}
+                title={item.title}
+                icon={item.icon}
+                qty={item.qty}
+                isActive={activeTab === idx}
+                onClick={() => this.handleTabClick(idx)}
+              />
+            ))
+          )}
         </div>
 
         <div>

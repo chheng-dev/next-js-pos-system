@@ -4,7 +4,7 @@ import {Textarea} from "@nextui-org/react";
 
 export default function TextareaField({label, placeholder, register, value, onChange, name, ...rest}) {
   return(
-    <div className="mb-3">
+    <div className="mb-3" style={{position: 'relative', zIndex: 0}}>
       <Textarea
         key="flat"
         variant="flat"
