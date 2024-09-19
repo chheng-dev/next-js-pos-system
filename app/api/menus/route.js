@@ -1,14 +1,27 @@
 import { NextResponse } from "next/server";
-import db from "../../../lib/db";
+import { getListMenus, createMenu } from "@/models/menuModel";
+
+
+export async function GET() {
+  try {
+    const menus = await getListMenus();
+    return NextResponse.json(menus);
+  } 
+  catch(error) {
+    console.log(error);
+    return NextResponse.json({
+      error,
+      message: 'Failed to retriving a menus'
+    }, {
+      status: 500
+    });
+  }
+}
 
 export async function POST(request) {
   try {
     const {title, slug, description} = await request.json();
-
-    const result = await db.menu.create({
-      data: {title, slug,  description}
-    })
-
+    const result = await createMenu(title, slug, description);
     
     return NextResponse.json(result);
   }
@@ -17,30 +30,6 @@ export async function POST(request) {
     return NextResponse.json({
       error,
       message: 'Failed to create a menu'
-    }, {
-      status: 500
-    });
-  }
-}
-
-export async function GET() {
-  try {
-    if(!db.menu){
-      throw new Error('Menu modle is not defined in db.');
-    }
-
-    const menus = await db.menu.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      }
-    });
-    return NextResponse.json(menus);
-  } 
-  catch(error) {
-    console.log(error);
-    return NextResponse.json({
-      error,
-      message: 'Failed to retriving a menus'
     }, {
       status: 500
     });
