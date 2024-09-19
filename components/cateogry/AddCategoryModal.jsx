@@ -274,7 +274,7 @@ class AddCategoryModal extends Component {
                 name="categoryName"
                 value={categoryName}
                 onChange={this.handleInputChange}
-                required
+                required          
               />
 
               <CustomSelect

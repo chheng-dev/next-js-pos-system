@@ -3,6 +3,8 @@ import { Book, DollarSign, Folder, LayoutDashboard, ListOrdered, LogOutIcon, Use
 import Link from 'next/link'
 import React from 'react'
 import { usePathname } from 'next/navigation'
+import { signOut } from 'next-auth/react'
+import LogoutButton from "@/components/LogoutButton"
 
 
 function Sidebar() {
@@ -71,9 +73,8 @@ function Sidebar() {
             );
           })}
         </ul>
-      </div>
-      <div className="w-full flex justify-center mb-4">
-        <Link href="/logout">
+        <div className="w-full flex justify-center mb-4">
+        {/* <button type='button' onClick={()=> signOut()}>
           <li className="py-1 flex flex-col items-center text-white">
             <div className="w-full flex justify-center mb-1 content-icon">
               <LogOutIcon className="w-6 h-6 icon-circle text-custom-pink p-1" />
@@ -82,7 +83,21 @@ function Sidebar() {
               <small>Logout</small>
             </span>
           </li>
-        </Link>
+        </button> */}
+        <LogoutButton />
+      </div>
+      </div>
+      <div className="w-full flex justify-center mb-4">
+        <button onClick={()=> signOut()}>
+          <li className="py-1 flex flex-col items-center text-white">
+            <div className="w-full flex justify-center mb-1 content-icon">
+              <LogOutIcon className="w-6 h-6 icon-circle text-custom-pink p-1" />
+            </div>
+            <span className="text-xs">
+              <small>Logout</small>
+            </span>
+          </li>
+        </button>
       </div>
     </div>
   );

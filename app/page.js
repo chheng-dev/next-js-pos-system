@@ -1,7 +1,8 @@
-export default function Home() {
+
+export default async function HomePage() {
   return (
-    <div className="container">
-      <h1>Hello world</h1>
+    <div className="w-full h-screen">
+      Home page
     </div>
   );
 }
