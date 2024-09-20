@@ -2,7 +2,7 @@ import pool from "../lib/db";
 
 export const getCategories = async () => {
   try {
-    const result = await pool.query('SELECT * FROM categories');
+    const result = await pool.query('SELECT * FROM categories ORDER BY updated_at DESC;');
     return result.rows;
   } catch (error) {
     throw error;

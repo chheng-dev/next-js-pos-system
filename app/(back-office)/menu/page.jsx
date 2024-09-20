@@ -1,122 +1,105 @@
-"use client"
-import React, { Component } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import CategoryItem from "@/components/cateogry/CategoryItem";
-import { Button } from "@nextui-org/react";
-import { PiHamburgerBold } from "react-icons/pi";
-import { GiFullPizza, GiChickenOven, GiBread, GiSadCrab } from "react-icons/gi";
-import { RiDrinks2Line } from "react-icons/ri";
-import { LayoutGridIcon } from "lucide-react";
-import TableItem from "@/components/cateogry/TableItem";
+import { Button, Skeleton } from "@nextui-org/react";
+import { toast } from "react-hot-toast";
 import AddCategoryModal from "@/components/cateogry/AddCategoryModal";
 import SpecialMenuItem from "@/components/cateogry/SpecailMenuItem";
-import { toast } from "react-hot-toast";
-import {Skeleton} from "@nextui-org/react";
+import TableItem from "@/components/cateogry/TableItem";
 
+const Page = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
 
+  useEffect(() => {
+    const fetchCategoriesList = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:3000/api/categories", {
+          method: 'GET',
+          headers: {
+            "Content-Type": 'application/json',
+          },
+        });
 
-class Page extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeTab: 0,
-      isModalOpen: false,
-      loading: false,
-      items: []
-    };
-  }
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
 
-  handleTabClick = (index) => {
-    this.setState({ activeTab: index });
-  };
-
-  async componentWillMount(){
-    await this.getCategoriesList();
-  }
-
-  handleModalClick = () => {
-    this.setState({ isModalOpen: true });
-  };
-
-  handleModalClose = () => {
-    this.setState({ isModalOpen: false });
-  };
-
-    getCategoriesList = async () => {
-    try {
-      this.setState({ loading: true });
-      const response = await fetch("http://localhost:3000/api/categories", {
-        method: 'GET',
-        headers: {
-          "Content-Type": 'application/json'
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
+        const result = await response.json();
+        setItems(result);
+      } catch (error) {
+        toast.error('An error occurred while making the request');
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const result = await response.json();
-      this.setState({ items: result });
-    } catch (error) {
-      toast.error('An error occurred while making the request');
-      console.error(error);
-    } finally {
-      this.setState({ loading: false });
-    }
-  } 
+    fetchCategoriesList();
+  }, []);
 
-  render() {
-    const { activeTab, isModalOpen, items } = this.state;
-    
+  const handleTabClick = (index) => {
+    setActiveTab(index);
+  };
 
-    return (
-      <div className="mt-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3>Categories</h3>
-          </div>
-          <div>
-            <Button className="bg-customPrink-400" size="sm" onClick={this.handleModalClick}>
-              Add New Category
-            </Button>
-          </div>
-        </div>
+  const handleModalClick = () => {
+    setIsModalOpen(true);
+  };
 
-        {/* Category Item */}
-        <div className="lg:flex grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-        {this.state.loading ? (
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div className="mt-2">
+      <div className="flex items-center justify-between">
+        <h3>Categories</h3>
+        <Button className="bg-customPrink-400" size="sm" onClick={handleModalClick}>
+          Add New Category
+        </Button>
+      </div>
+
+      {/* Category Item */}
+      <div className="lg:flex grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        {loading ? (
           Array.from({ length: 7 }).map((_, idx) => (
             <Skeleton
-              key={idx} // Add a unique key for each Skeleton item
+              key={idx}
               animate="true"
               css={{ borderRadius: "$md" }}
               className="bg-secondary-400 rounded-md"
-              style={{height: '100px'}}
+              style={{ height: '100px' }}
             />
           ))
         ) : (
           items.map((item, idx) => (
             <CategoryItem
-              key={idx} // Ensure a unique key for each CategoryItem
+              key={idx}
               title={item.title}
               icon={item.icon}
               qty={item.qty}
               isActive={activeTab === idx}
-              onClick={() => this.handleTabClick(idx)}
+              onClick={() => handleTabClick(idx)}
             />
           ))
         )}
-        </div>
-
-        <div>
-          {/* Special Menu Item */}
-          <SpecialMenuItem />
-          <TableItem />
-          <AddCategoryModal isOpen={isModalOpen} onClose={this.handleModalClose} handleGetCategoriesList={this.getCategoriesList} />
-        </div>
       </div>
-    );
-  }
-}
+
+      <div>
+        {/* Special Menu Item */}
+        <SpecialMenuItem />
+        <TableItem />
+        <AddCategoryModal 
+          isOpen={isModalOpen} 
+          onClose={handleModalClose} 
+          handleGetCategoriesList={() => fetchCategoriesList()} 
+        />
+      </div>
+    </div>
+  );
+};
 
 export default Page;

@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import db from "../../../lib/db";
 import { getCategories, createCategory } from "@/models/categoryModel";
 
 export async function GET() {
   try {
     const categories = await getCategories();
     return NextResponse.json(categories);
-  } 
-  catch(error) {
+  }
+  catch (error) {
     console.log(error);
     return NextResponse.json({
       error,
@@ -20,12 +19,12 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const {title, icon, description, menuId} = await request.json();
+    const { title, icon, description, menuId } = await request.json();
     const result = await createCategory(title, icon, description, menuId);
-    
+
     return NextResponse.json(result);
   }
-  catch(error){
+  catch (error) {
     console.log(error);
     return NextResponse.json({
       error,
