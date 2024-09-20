@@ -3,7 +3,6 @@ import { Book, DollarSign, Folder, LayoutDashboard, ListOrdered, LogOutIcon, Use
 import Link from 'next/link'
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
 import LogoutButton from "@/components/LogoutButton"
 
 

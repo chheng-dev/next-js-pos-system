@@ -11,7 +11,6 @@ import burger from "../../../assets/images/burger-with-melted-cheese.jpg";
 import hotDog from "../../../assets/images/hot-dog.jpg";
 import Link from 'next/link';
 
-import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 

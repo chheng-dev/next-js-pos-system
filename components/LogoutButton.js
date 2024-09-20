@@ -1,5 +1,4 @@
 // components/LogoutButton.js
-import { signOut } from 'next-auth/react';
 
 const LogoutButton = () => {
   const handleLogout = async () => {

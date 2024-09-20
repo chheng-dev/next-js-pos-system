@@ -5,7 +5,6 @@ import { Checkbox } from "@nextui-org/checkbox";
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
