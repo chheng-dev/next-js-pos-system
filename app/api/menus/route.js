@@ -6,8 +6,8 @@ export async function GET() {
   try {
     const menus = await getListMenus();
     return NextResponse.json(menus);
-  } 
-  catch(error) {
+  }
+  catch (error) {
     console.log(error);
     return NextResponse.json({
       error,
@@ -20,12 +20,12 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const {title, slug, description} = await request.json();
+    const { title, slug, description } = await request.json();
     const result = await createMenu(title, slug, description);
-    
+
     return NextResponse.json(result);
   }
-  catch(error){
+  catch (error) {
     console.log(error);
     return NextResponse.json({
       error,

@@ -16,7 +16,6 @@ import dynamic from 'next/dynamic';
 const MyChart = dynamic(() => import('../../../components/dashboard/MyChart'), { ssr: false });
 
 
-
 function page() {
   return (
     <div className='w-full overflow-x-auto mt-4'>
