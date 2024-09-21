@@ -4,7 +4,6 @@ import Link from 'next/link'
 import React from 'react'
 import { usePathname } from 'next/navigation'
 
-
 function Sidebar() {
 
   const navigationItemTop = [
@@ -42,6 +41,29 @@ function Sidebar() {
 
   const pathname = usePathname();
 
+  async function handleLogout() {
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+        console.log('Logout successful');
+        localStorage.removeItem('token'); 
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        window.location.href = '/login';
+      } else {
+        const data = await response.json();
+        console.error('Logout failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
+
   const getLinkClassName = (path) => {
     return `py-1 flex flex-col items-center mb-4 text-white ${
       pathname === path ? "bg-custom-pink text-gray-700 rounded-lg" : ""
@@ -73,7 +95,7 @@ function Sidebar() {
         </ul>
       </div>
       <div className="w-full flex justify-center mb-4">
-        <Link href="/logout">
+        <span onClick={() => handleLogout()}>
           <li className="py-1 flex flex-col items-center text-white">
             <div className="w-full flex justify-center mb-1 content-icon">
               <LogOutIcon className="w-6 h-6 icon-circle text-custom-pink p-1" />
@@ -82,7 +104,7 @@ function Sidebar() {
               <small>Logout</small>
             </span>
           </li>
-        </Link>
+        </span>
       </div>
     </div>
   );
