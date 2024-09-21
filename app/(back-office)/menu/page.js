@@ -45,7 +45,7 @@ export default function Page() {
     };
 
     fetchCategories();
-  }, []); // Empty dependency array ensures this runs only on component mount.
+  }, []);
 
   return (
     <div className="mt-2">

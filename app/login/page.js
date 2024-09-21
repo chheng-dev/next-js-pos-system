@@ -54,17 +54,17 @@ export default function Login() {
 
         document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60};`;
 
-
         window.location.href = '/dashboard';
       } else {
         console.error('Login failed:', data.message);
-        alert('Login failed: ' + data.message);
+        toast.error("Login failed:", data.message);
       }
     } catch (err) {
-      console.error('Error during login:', error);
-      alert('Error during login');
+      console.error('Error during login:', err);
+      toast.error("Error during login!");
     }
   }
+
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);

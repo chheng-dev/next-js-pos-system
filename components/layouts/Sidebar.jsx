@@ -94,7 +94,7 @@ function Sidebar() {
           })}
         </ul>
       </div>
-      <div className="w-full flex justify-center mb-4">
+      <div className="w-full flex justify-center mb-4 absolute cursor-pointer bottom-0">
         <span onClick={() => handleLogout()}>
           <li className="py-1 flex flex-col items-center text-white">
             <div className="w-full flex justify-center mb-1 content-icon">
