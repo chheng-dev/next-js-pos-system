@@ -1,5 +1,7 @@
 "use client"
 import { Book, DollarSign, Folder, LayoutDashboard, ListOrdered, LogOutIcon, UsersRound } from 'lucide-react'
+import { FaBoxOpen, FaUserPlus } from "react-icons/fa";
+
 import Link from 'next/link'
 import React from 'react'
 import { usePathname } from 'next/navigation'
@@ -18,6 +20,11 @@ function Sidebar() {
       icon: Folder
     },
     {
+      title: "Product",
+      path: "/products",
+      icon: FaBoxOpen
+    },
+    {
       title: "Staff",
       path: "/staff",
       icon: UsersRound
@@ -26,6 +33,11 @@ function Sidebar() {
       title: "Reports",
       path: "/reports",
       icon: DollarSign
+    },
+    {
+      title: "Users",
+      path: "/users",
+      icon: FaUserPlus
     },
     {
       title: "Order/Table",
