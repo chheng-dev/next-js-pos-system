@@ -67,8 +67,16 @@ class AddCategoryModal extends Component {
 
   handleFormSubmit = async (e) => {
     e.preventDefault();
+    
     const { title, selectedMenu, description, imageUrl } = this.state;
-    let menuId = selectedMenu?.id; // Ensure selectedMenu is valid
+    let menuId = selectedMenu?.id; 
+
+    const tremmedtTitle = title.trim();
+
+    if(!tremmedtTitle) {
+      toast.error('Title is required');
+      return;
+    }
 
     if (!menuId) {
       toast.error('Please select a valid menu.');
@@ -109,7 +117,7 @@ class AddCategoryModal extends Component {
     } finally {
       this.setState({ loading: false });
     }
-  };
+  }; 
 
   render() {
     const { isOpen, onClose } = this.props;
@@ -122,6 +130,7 @@ class AddCategoryModal extends Component {
         direction='right'
         className='max-w-full'
         size="400px"
+        id="add-category"
       >
         <div className="container">
           <HeaderDrawer title="Add New Category" onClick={onClose} />
@@ -136,6 +145,7 @@ class AddCategoryModal extends Component {
                 value={title}
                 onChange={this.handleInputChange}
                 required
+                isRequired={true}
               />
 
               <CustomSelect
@@ -144,6 +154,7 @@ class AddCategoryModal extends Component {
                 value={selectedMenu}
                 items={menuOption}
                 onChange={value => this.handleSelectChange("selectedMenu", value)}
+                isRequired={true}
               />
 
               <TextareaField
@@ -160,6 +171,7 @@ class AddCategoryModal extends Component {
                 setImageUrl={url => this.setState({ imageUrl: url })}
                 endpoint="imageUploader"
               />
+              
 
               <div className="fixed bottom-0 mb-4 right-4">
                 <Button color="foreground" variant="light" onPress={onClose}>
@@ -182,3 +194,6 @@ class AddCategoryModal extends Component {
 }
 
 export default AddCategoryModal;
+
+
+

@@ -1,16 +1,15 @@
-import { authService } from "@/services/authService";
+import { UserModel } from "@/models/userModel";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { username, email, password } = await request.json();
+    const { full_name, username, email, password, role, is_active, image } = await request.json();
 
-    // Log the parsed body for debugging
-    console.log({ username, email, password });
+    console.log({ full_name, username, email, password, role, is_active, image });
 
-    const result = await authService.register(username, email, password);
+    const result = await UserModel.createUser(full_name, username, email, password, role, is_active, image);
 
-    return NextResponse.json({ user: result });
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(

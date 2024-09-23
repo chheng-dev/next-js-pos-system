@@ -1,12 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CategoryItem from "@/components/cateogry/CategoryItem";
 import { Button } from "@nextui-org/react";
-import TableItem from "@/components/cateogry/TableItem";
-import AddCategoryModal from "@/components/cateogry/AddCategoryModal";
-import SpecialMenuItem from "@/components/cateogry/SpecailMenuItem";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "@nextui-org/react";
+import dynamic from 'next/dynamic';
+
+const AddCategoryModal = dynamic(() => import('@/components/cateogry/AddCategoryModal'), { ssr: true });
+const CategoryItem = dynamic(() => import('@/components/cateogry/CategoryItem'), { ssr: true });
+const TableItem = dynamic(() => import('@/components/cateogry/TableItem'), { ssr: true });
+const SpecialMenuItem = dynamic(() => import('@/components/cateogry/SpecailMenuItem'), { ssr: true });
+
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState(0);
@@ -14,7 +17,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
 
-  const handleTabClick = (index) => {
+const handleTabClick = (index) => {
     setActiveTab(index);
   };
 
@@ -27,25 +30,25 @@ export default function Page() {
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("http://localhost:3000/api/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        toast.error("An error occurred while making the request");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/api/categories");
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      toast.error("An error occurred while making the request");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="mt-2">
@@ -70,7 +73,7 @@ export default function Page() {
           Array.from({ length: 7 }).map((_, idx) => (
             <Skeleton
               key={idx}
-              animate={true}
+              // animate={true}
               css={{ borderRadius: "$md" }}
               className="bg-secondary-400 rounded-md"
               style={{ height: "100px" }}
@@ -93,11 +96,11 @@ export default function Page() {
       <div>
         {/* Special Menu Item */}
         <SpecialMenuItem />
-        <TableItem />
+        {/* <TableItem /> */}
         <AddCategoryModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          handleGetCategoriesList={() => { }}
+          handleGetCategoriesList={() => fetchCategories()}
         />
       </div>
     </div>

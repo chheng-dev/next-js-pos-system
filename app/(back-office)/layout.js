@@ -5,18 +5,25 @@ import Sidebar from "@/components/layouts/Sidebar";
 import 'react-modern-drawer/dist/index.css';
 import Loading from "../loading";
 import { Suspense } from "react";
+import { Providers } from "../provider";
+import { Toaster } from "react-hot-toast";
+
 
 
 export default function Layout({ children }) {
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex gap-4 body-content">
+
         <Sidebar />
         <div className="w-full p-4 flex flex-col">
           <Header />
-          <Suspense fallback={<Loading />}>
-            {children}
-          </Suspense>
+          <Providers>
+            <Suspense fallback={<Loading />}>
+              {children}
+            </Suspense>
+          </Providers>
         </div>
       </div>
     </>

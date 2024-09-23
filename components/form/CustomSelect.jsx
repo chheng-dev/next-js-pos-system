@@ -6,7 +6,8 @@ class CustomSelect extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value || ""
+      value: props.value || "",
+      isRequired: props.isRequired
     };
   }
 
@@ -45,24 +46,16 @@ class CustomSelect extends Component {
 
     return (
       <div className="mb-3">
-        {/* <Select
-          value={value}
-          placeholder={placeholder}
-          label={label}
-          labelPlacement="outside"
-          onChange={this.handleChange}
-          className="max-w-full"
-        >
-          {items.map((item) => (
-            <SelectItem key={item.key} value={item.value}>
-              {item.label}
-            </SelectItem>
-          ))}
-        </Select> */}
-        <label htmlFor="selectLable">{label}</label>
+        <label htmlFor="selectLable">
+          {label}
+          {
+            !this.props.value  &&  <span className="text-red-500">*</span>
+          }
+        </label>
         <Select 
           options={items} 
           value={value}
+          defaultValue={value?.[value.length - 1]} 
           placeholder={placeholder}
           labelPlacement="outside"
           onChange={this.handleChange}

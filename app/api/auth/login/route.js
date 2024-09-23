@@ -7,13 +7,11 @@ export async function POST(request) {
   try {
     const { username, password } = await request.json();
 
-    console.log({ username, password });
-
     const query = `SELECT * FROM users WHERE username = $1`;
     const { rows } = await pool.query(query, [username]);
     const user = rows[0];
 
-    if (!user) {
+    if (!user || !user.is_active) {
       return NextResponse.json(
         { message: "Invalid username or password" },
         { status: 401 }
@@ -36,7 +34,6 @@ export async function POST(request) {
       { expiresIn: "1h" }
     );
 
-    // Return the token and user information
     return NextResponse.json({
       token,
       user: {
@@ -46,18 +43,6 @@ export async function POST(request) {
         role: user.role,
       },
     });
-
-
-    // Set the token in a HttpOnly cookie
-    // const response = NextResponse.json({ message: 'Login Successful' });
-
-    // response.cookies.set('token', token, {
-    //   httpOnly: true, // Prevent Javascript access to the cookie
-    //   secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
-    //   sameSite: 'strict', // Help prevent CSRF attacks
-    //   maxAge: 60 * 60, // Token expiration in secaonds (1 hour)
-    //   path: '/' // Cokkie is accessible across
-    // })
 
   } catch (error) {
     console.error('Error:', error);

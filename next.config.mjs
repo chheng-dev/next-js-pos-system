@@ -6,6 +6,7 @@ const nextConfig = {
     includePaths: [path.join(process.cwd(), 'styles')],
   },
   images: {
+    domains: ['assets.acme.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -16,6 +17,18 @@ const nextConfig = {
         hostname: 'utfs.io'
       }
     ],
+  },
+  reactStrictMode: false,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        dns: false,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    return config;
   },
 };
 
