@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Humanize from "@/lib/dateUtils";
-import { Checkbox, Switch } from "@nextui-org/react";
+import { Checkbox, Pagination, Switch } from "@nextui-org/react";
 import { Chip } from "@nextui-org/chip";
 
 class Table extends Component {
@@ -13,10 +13,30 @@ class Table extends Component {
         acc[row.id] = row.is_active;
         return acc;
       }, {}),
+      currentPage: props.currentPage | 0,
+      rowsPerPage: props.rowsPerPage | 0
     };
 
     this.humanize = new Humanize();
   }
+
+  getTotalPages(){
+    return Math.ceil(this.props.data.length / this.state.rowsPerPage);
+  }
+
+  getCurrentData(){
+    const { currentPage, rowsPerPage } = this.state;
+    const { data } = this.props;
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    return data.slice(startIndex, endIndex);
+  }
+
+  handlePageChange(newPage){
+    if (newPage < 1 || newPage > this.getTotalPages()) return;
+    this.setState({ currentPage: newPage});
+  }
+
 
   handleEdit = (id) => {
     console.log(`Edit record with ID: ${id}`);
@@ -39,6 +59,9 @@ class Table extends Component {
   render() {
     const { columns, data } = this.props;
     const { activeRows } = this.state;
+    const { currentPage, rowsPerPage } = this.state; 
+    const currentData = this.getCurrentData();
+    const totalPages = this.getTotalPages();
 
     if (!columns.length || !data.length) {
       return (
@@ -63,6 +86,7 @@ class Table extends Component {
                   </label>
                 </div>
               </th>
+
               {columns.map((column, index) => (
                 <th scope="col" className="px-6 py-3" key={index}>
                   {column.title}
@@ -71,7 +95,7 @@ class Table extends Component {
             </tr>
           </thead>
           <tbody>
-            {data.map((row, rowIndex) => (
+            {currentData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
                 className="bg-secondary-400 border-red-500 hover:bg-slate-600 hover:cursor-pointer"
@@ -89,9 +113,11 @@ class Table extends Component {
                     </label>
                   </div>
                 </td>
+
                 <td className="px-6 py-4 font-medium whitespace-nowrap text-white">
-                  {rowIndex + 1}
+                  {(currentPage - 1) * rowsPerPage + rowIndex + 1}
                 </td>
+
 
                 {columns.map((column, colIndex) => {
                   if (column.title === "ID") return null;
@@ -140,6 +166,26 @@ class Table extends Component {
             ))}
           </tbody>
         </table>
+        
+        {
+          data.length > rowsPerPage && (
+            <div className="flex justify-center items-center space-x-4 mt-4">
+              <p className="text-small text-default-500">Page {currentPage} of {totalPages}</p>
+              <Pagination
+                loop
+                showControls
+                color="primary"
+                radius="full"
+                total={totalPages}
+                initialPage={1}
+                page={currentPage}
+                onChange={(page) => this.handlePageChange(page)}
+                size="sm"
+              />
+            </div>
+          )
+        }
+
       </div>
     );
   }

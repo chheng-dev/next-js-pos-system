@@ -106,7 +106,12 @@ class Page extends Component {
           </div>
         </div>
         <div className="mt-3">
-          <Table columns={this.columns} data={users} setHandleRemoveButton={this.handleRemoveButton}
+          <Table
+            columns={this.columns}
+            data={users}
+            currentPage={1}
+            rowsPerPage={10}
+            setHandleRemoveButton={this.handleRemoveButton}
           />
         </div>
 
