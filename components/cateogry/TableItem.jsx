@@ -73,7 +73,6 @@ const rows = [
 ]
 
 export default function TableItem() {
-  // const [selectedKeys, setSelectedKeys] = React.useState(new Set(["2"]));
 
   return (
     <div className="mt-6">
@@ -81,8 +80,6 @@ export default function TableItem() {
         color="primary"
         aria-label="Controlled table example with dynamic content"
         selectionMode="multiple"
-        // selectedKeys={selectedKeys}
-        // onSelectionChange={setSelectedKeys}
       >
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}

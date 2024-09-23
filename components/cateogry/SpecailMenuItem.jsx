@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import { Tabs, Tab, Button } from "@nextui-org/react";
 import { PlusCircleIcon } from "lucide-react";
-import Drawer from 'react-modern-drawer';
 import { toast } from "react-hot-toast";
 import HeaderDrawer from "../HeaderDrawer";
 import TextField from "../form/TextField";
 import TextareaField from "../form/TextareaField";
 import slugify from "react-slugify";
+
+import dynamic from 'next/dynamic';
+
+const Drawer = dynamic(() => import('react-modern-drawer'), { ssr: false });
 
 class SpecialMenuItem extends Component {
   constructor(props) {
@@ -71,14 +74,21 @@ class SpecialMenuItem extends Component {
   handleFormSubmit = async (e) => {
     e.preventDefault();
     
-    const {title, description} = this.state.form;
-    const slug = slugify(title);
-
-    const data = {
-      title,
-      description,
-      slug
+    const { title, description } = this.state.form;
+    const trimmedTitle = title.trim();
+  
+    if (!trimmedTitle) {
+      toast.error('Title is required');
+      return;
     }
+  
+    const slug = slugify(trimmedTitle);
+    const data = {
+      title: trimmedTitle,
+      description: description.trim(),
+      slug
+    };
+  
     try {
       this.setState({ loading: true });
       const response = await fetch("http://localhost:3000/api/menus", {
@@ -88,7 +98,7 @@ class SpecialMenuItem extends Component {
         },
         body: JSON.stringify(data)
       });
-
+  
       if (response.ok) {
         toast.success('New menu created successfully!');
         this.setState({
@@ -100,15 +110,17 @@ class SpecialMenuItem extends Component {
         this.onClose();
         this.fetchMenus();
       } else {
-        toast.error('Something went wrong');
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Failed to create menu');
       }
     } catch (error) {
       toast.error('An error occurred while making the request');
-      console.error(error);
+      console.error('Error:', error);
     } finally {
       this.setState({ loading: false });
     }
-  }
+  };
+  
 
   render() {
     const { isOpen, loading, tabItems, form } = this.state;
