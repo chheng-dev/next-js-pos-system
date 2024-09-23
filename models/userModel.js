@@ -21,5 +21,14 @@ export const UserModel = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async deleteUserById(id) {
+    try {
+      const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
+      return result.rows;
+    } catch (error) {
+      throw error;
+    }
   }
 };

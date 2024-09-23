@@ -33,5 +33,15 @@ export const UserService = {
     } catch (error) {
       throw new Error(error.response?.data?.message || "User registration failed");
     }
+  },
+
+  async deleteUserById(id) {
+    try {
+      const res = await axios.delete(`${API_URL_BASE}/api/users/${id}`);
+
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "User deletion failed");
+    }
   }
 }

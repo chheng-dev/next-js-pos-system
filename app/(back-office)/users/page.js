@@ -1,35 +1,43 @@
 "use client";
 
-import React from "react";
+import React, { Component } from "react";
 import Table from "@/components/Table";
 import { UserService } from "@/services/userService";
-import { Button, user } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { Button } from "@nextui-org/react";
 import CreateUserComp from "@/components/user/CreateUserComp";
+import ConfirmationModal from "@/components/form/ConfirmationModal";
+import toast from "react-hot-toast";
 
-export default function Page() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+class Page extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: [],
+      loading: false,
+      isModalOpen: false,
+      isConfirmationModalOpen: false,
+      currentId: null,
+    };
 
+  }
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  componentDidMount() {
+    this.fetchUsers();
+  }
 
-  const fetchUsers = async () => {
+  fetchUsers = async () => {
     try {
-      setLoading(true);
+      this.setState({ loading: true });
       const users = await UserService.getUserList();
-      setUsers(users);
+      this.setState({ users });
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
-      setLoading(false);
+      this.setState({ loading: false });
     }
   };
 
-  const columns = [
+  columns = [
     { title: 'ID', accessor: 'id' },
     { title: 'Username', accessor: 'username' },
     { title: 'Email', accessor: 'email' },
@@ -41,35 +49,81 @@ export default function Page() {
     { title: 'Action' } // Action column added
   ];
 
-
-  const handleModalClick = () => {
-    setIsModalOpen(true);
+  handleModalClick = () => {
+    this.setState({ isModalOpen: true });
   };
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
+  handleModalClose = () => {
+    this.setState({ isModalOpen: false });
   };
 
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg">Users List ({users.length})</h3>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            className="bg-customPrink-400"
-            onClick={handleModalClick}
-          >
-            Create New
-          </Button>
-        </div>
-      </div>
-      <div className="mt-3">
-        <Table columns={columns} data={users} />
-      </div>
+  handleRemoveButton = (id) => {
+    this.setState({ currentId: id, isConfirmationModalOpen: true });
+  };
 
-      <CreateUserComp isOpen={isModalOpen} onClose={handleModalClose} handleGetUserList={() => fetchUsers()} />
-    </div>
-  );
+  closeConfirmationModal = () => {
+    this.setState({ isConfirmationModalOpen: false });
+  };
+
+  async onConfirmDeleteUser() {
+    this.setState({ loading: true });
+
+    try {
+      const response = await UserService.deleteUserById(this.state.currentId);
+
+      if (!response) {
+        throw new Error("Failed to delete user");
+      }
+
+      toast.success('User has been deleted successfully :)');
+      this.fetchUsers();
+    } catch (error) {
+      toast.error("An error occurred while making the request");
+      console.error(error.message);
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+
+
+  render() {
+    const { users, isModalOpen, isConfirmationModalOpen } = this.state;
+
+    return (
+      <div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg">Users List ({users.length})</h3>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              className="bg-customPrink-400"
+              onClick={this.handleModalClick}
+            >
+              Create New
+            </Button>
+          </div>
+        </div>
+        <div className="mt-3">
+          <Table columns={this.columns} data={users} setHandleRemoveButton={this.handleRemoveButton}
+          />
+        </div>
+
+        <CreateUserComp
+          isOpen={isModalOpen}
+          onClose={this.handleModalClose}
+          handleGetUserList={this.fetchUsers}
+        />
+
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={this.closeConfirmationModal}
+          onConfirmHandleClick={() => this.onConfirmDeleteUser()}
+        />
+      </div>
+    );
+  }
 }
+
+export default Page;

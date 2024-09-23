@@ -54,16 +54,13 @@ class CreateUserComp extends Component {
 
     
     try {
-      // Set loading state
       this.setState({ loading: true });
   
-      // Call the register service
       const response = await authService.register(data);
   
       if (response.ok) {
         toast.success('User created successfully!');
   
-        // // Reset form fields
         this.setState({
           full_name: '',
           username: '',
@@ -73,10 +70,8 @@ class CreateUserComp extends Component {
           imageUrl: null
         });
   
-        // Close the form/modal
         this.props.onClose();
   
-        // Refresh the user list if the function exists
         if (this.props.handleGetUserList) {
           this.props.handleGetUserList();
         }
@@ -84,11 +79,9 @@ class CreateUserComp extends Component {
         toast.error(`Something went wrong:)`);
       }
     } catch (error) {
-      // Handle any other errors
       toast.error('An error occurred while making the request');
       console.error('Error details:', error);
     } finally {
-      // Reset the loading state
       this.setState({ loading: false });
     }
 
