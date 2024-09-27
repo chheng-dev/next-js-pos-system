@@ -2,8 +2,6 @@ import axios from "axios";
 
 const API_URL_BASE = process.env.NEXT_PUBLIC_BASE_API_URL;
 
-console.log("API_URL_BASE", API_URL_BASE)
-
 export const UserService = {
   async getUserList() {
     try {
@@ -42,6 +40,34 @@ export const UserService = {
       return res.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "User deletion failed");
+    }
+  },
+
+  async updateUserActiveStatus(id, isActive) {
+    try {
+      const res = await axios.patch(`${API_URL_BASE}/api/update-user-active`, {
+        id,
+        isActive
+      });
+
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "User not found or changes mate.");
+    }
+  },
+
+  async getUserById(id) {
+    try {
+      const res = await axios.get(`${API_URL_BASE}/api/users/${id}`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": 'application/json'
+        }
+      });
+
+      return res.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "User Id not found.");
     }
   }
 }

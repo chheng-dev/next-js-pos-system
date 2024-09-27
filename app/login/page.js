@@ -15,24 +15,6 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   const res = await signIn("credentials", {
-  //     redirect: false,
-  //     username,
-  //     password,
-  //   });
-
-  //   if (res?.error) {
-  //     setError("Login failed. Please check your credentials.");
-  //     toast.error("Login failed!");
-  //   } else {
-  //     toast.success("Login successful!");
-  //     router.push('/dashboard');
-  //   }
-  // };
-
   async function handleSubmit(event) {
     event.preventDefault();
     try {
@@ -100,7 +82,7 @@ export default function Login() {
                   name="username"
                   value={username}
                   onChange={handleInputChange}
-                  required
+                  isRequired={true}
                 />
 
                 <TextField
@@ -110,9 +92,9 @@ export default function Login() {
                   name="password"
                   value={password}
                   onChange={handleInputChange}
-                  required
                   isVisible={isPasswordVisible}
                   toggleVisibility={togglePasswordVisibility}
+                  isRequired={true}
                 />
 
                 <div className="flex items-center justify-between mt-3">

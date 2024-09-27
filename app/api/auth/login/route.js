@@ -11,7 +11,7 @@ export async function POST(request) {
     const { rows } = await pool.query(query, [username]);
     const user = rows[0];
 
-    if (!user) {
+    if (!user || !user.is_active) {
       return NextResponse.json(
         { message: "Invalid username or password" },
         { status: 401 }
@@ -34,7 +34,6 @@ export async function POST(request) {
       { expiresIn: "1h" }
     );
 
-    // Return the token and user information
     return NextResponse.json({
       token,
       user: {

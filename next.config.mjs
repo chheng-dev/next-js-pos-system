@@ -6,6 +6,7 @@ const nextConfig = {
     includePaths: [path.join(process.cwd(), 'styles')],
   },
   images: {
+    domains: ['assets.acme.com'],
     remotePatterns: [
       {
         protocol: 'https',

@@ -3,12 +3,15 @@ import Drawer from 'react-modern-drawer';
 import HeaderDrawer from '../HeaderDrawer';
 import TextField from '../form/TextField';
 import CustomSelect from '../form/CustomSelect';
-import { Button } from '@nextui-org/react';
+import { Avatar, Button, user } from '@nextui-org/react';
 import { toast } from "react-hot-toast";
 import ImageInput from '../form/ImageInput';
 import { authService } from '@/services/authService';
+import { UserService } from '@/services/userService';
+import Loading from '@/app/(back-office)/loading';
+import Image from 'next/image';
 
-class CreateUserComp extends Component {
+class EditUserComp extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,90 +21,16 @@ class CreateUserComp extends Component {
       selectedRole: '',
       loading: false,
       imageUrl: '',
-      loading: false,
-      password: ''
+      password: '',
     };
-    
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.uniqueId = `EZDrawer__checkbox${Math.random().toString(36).substr(2, 9)}`;
   }
-
-  rolesOption = [
-    { value: "admin", label: "Admin" },
-    { value: "user", label: "User" }
-  ];
-
-  async handleFormSubmit(e) {
-    e.preventDefault();
-
-    const { full_name, username, email, selectedRole, password, imageUrl } = this.state;
-
-    
-    if (!full_name.trim() || !username.trim() || !email.trim() || !selectedRole) {
-      toast.error('Please fill in all the required fields.');
-      return;
-    }
-  
-
-    const data = { 
-      full_name, 
-      username, 
-      email, 
-      is_active: false, 
-      role: selectedRole, 
-      password, 
-      imageUrl 
-    };  
-
-    
-    try {
-      this.setState({ loading: true });
-  
-      const response = await authService.register(data);
-  
-      if (response.ok) {
-        toast.success('User created successfully!');
-  
-        this.setState({
-          full_name: '',
-          username: '',
-          email: '',
-          selectedRole: '',
-          password: '',
-          imageUrl: null
-        });
-  
-        this.props.onClose();
-  
-        if (this.props.handleGetUserList) {
-          this.props.handleGetUserList();
-        }
-      } else {
-        toast.error(`Something went wrong:)`);
-      }
-    } catch (error) {
-      toast.error('An error occurred while making the request');
-      console.error('Error details:', error);
-    } finally {
-      this.setState({ loading: false });
-    }
-
-  }
-  
-
-
-  handleInputChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
-
-  handleSelectChange = (field, value) => {
-    this.setState({ [field]: value });
-  };
 
   render() {
-    const { full_name, username, email, selectedRole, password, loading } = this.state;
-    const { isOpen, onClose } = this.props;
+    const { isOpen, onClose, user, loading } = this.props;
+
+    if(loading){{
+      return <Loading/>
+    }}
 
     return (
       <div>
@@ -109,12 +38,11 @@ class CreateUserComp extends Component {
           open={isOpen} 
           onClose={onClose} 
           direction='right' 
-          className='max-w-full' 
+          className='max-w-full min-h-screen overflow-auto' 
           size="400px"
-          id={this.uniqueId}
         >
           <div className="container">
-            <HeaderDrawer title="Add New User" onClick={onClose} />
+            <HeaderDrawer title="Edit User" onClick={onClose} />
             <div className="mt-5">
               <form onSubmit={this.handleFormSubmit}>
                 <TextField
@@ -122,59 +50,65 @@ class CreateUserComp extends Component {
                   label="Full Name"
                   placeholder="Enter Full name"
                   name="full_name"
-                  value={full_name}
+                  value={user.full_name}
                   onChange={this.handleInputChange}
                   isRequired={true}
                 />
                 <TextField
                   type="text"
-                  label="UserName"
+                  label="Username"
                   placeholder="Enter username"
                   name="username"
-                  value={username}
+                  value={user.username}
                   onChange={this.handleInputChange}
                   isRequired={true}
                 />
-
                 <TextField
                   type="email"
                   label="Email"
                   placeholder="Enter your email"
                   name="email"
-                  value={email}
+                  value={user.email}
                   onChange={this.handleInputChange}
                   isRequired={true}
                 />
-
                 <CustomSelect
                   label="Roles"
                   placeholder="Select Roles"
-                  value={selectedRole}
+                  value={user.selectedRole}
                   items={this.rolesOption}
                   onChange={value => this.handleSelectChange("selectedRole", value)}
                   isRequired={true}
                 />
-
-                <div id='password' style={{position: 'relative', zIndex: -1}}>
+                <div id='password' style={{ position: 'relative', zIndex: 1 }}>
                   <TextField
                     type="password"
                     label="Password"
                     placeholder="Enter your password"
                     name="password"
-                    value={password}
+                    value={this.state.password}
                     onChange={this.handleInputChange}
                     isRequired={true}
                   />
                 </div>
-
+               
+               <div className='mb-4 w-full h-full block'>
                 <ImageInput
-                  label="Avatar"
-                  imageUrl={this.state.imageUrl}
-                  setImageUrl={url => this.setState({ imageUrl: url })}
-                  endpoint="imageUploader"
-                />
+                    label="Avatar"
+                    imageUrl={this.state.imageUrl}
+                    setImageUrl={url => this.setState({ imageUrl: url })}
+                    endpoint="imageUploader"
+                  />
+                  {
+                  user.image ? (
+                    <div>
+                      <Image src={user.image} width={100} height={150} className='rounded-md mt-3' />
+                    </div>
+                  ) : <Avatar />
+                }
+               </div>
 
-                <div className="fixed bottom-0 mb-4 right-4">
+                <div className="flex items-center justify-end">
                   <Button color="foreground" variant="light" onPress={onClose}>
                     Cancel
                   </Button>
@@ -191,4 +125,4 @@ class CreateUserComp extends Component {
   }
 }
 
-export default CreateUserComp;
+export default EditUserComp;

@@ -9,6 +9,7 @@ export default function TextField({ type = "text", label, placeholder, name, onC
           size="md"
           type={type}
           label={label}
+          form={value}
           labelPlacement="outside"
           placeholder={placeholder}
           value={value}
@@ -16,6 +17,7 @@ export default function TextField({ type = "text", label, placeholder, name, onC
           name={name}
           required={required}
           isRequired={!value ? isRequired : '' }
+          className="text-white dark:text-gray-800"
         />
       </div>
     </div>

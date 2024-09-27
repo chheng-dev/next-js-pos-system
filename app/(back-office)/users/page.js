@@ -1,14 +1,21 @@
 "use client";
-
 import React, { Component } from "react";
-import Table from "@/components/Table";
-import { UserService } from "@/services/userService";
-import { Button } from "@nextui-org/react";
-import CreateUserComp from "@/components/user/CreateUserComp";
-import ConfirmationModal from "@/components/form/ConfirmationModal";
+import { Avatar, Button, Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import { Chip } from "@nextui-org/chip";
+import { Switch } from "@nextui-org/react";
+import Humanize from "../../../lib/dateUtils";
+import dynamic from "next/dynamic";
+import { UserService } from "@/services/userService";
+import Loading from "../loading";
 
-class Page extends Component {
+const EditUserComp = dynamic(() => import('@/components/user/EditUserComp'), { ssr: true });
+const Table = dynamic(() => import('@/components/Table'), { ssr: true });
+const CreateUserComp = dynamic(() => import('@/components/user/CreateUserComp'), { ssr: true });
+const ConfirmationModal = dynamic(() => import('@/components/form/ConfirmationModal'), { ssr: true });
+
+
+export default class Page extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,7 +24,12 @@ class Page extends Component {
       isModalOpen: false,
       isConfirmationModalOpen: false,
       currentId: null,
+      isModalEditOpen: false,
+      user: {},
     };
+
+    this.humanize = new Humanize();
+    this.handleModalEditClose = this.handleModalEditClose.bind(this);
 
   }
 
@@ -29,6 +41,7 @@ class Page extends Component {
     try {
       this.setState({ loading: true });
       const users = await UserService.getUserList();
+      await new Promise(resolve => setTimeout(resolve, 500));
       this.setState({ users });
     } catch (error) {
       console.error("Failed to fetch users:", error);
@@ -37,16 +50,112 @@ class Page extends Component {
     }
   };
 
+  async fetchUserById(id) {
+    try {
+      this.setState({ loading: true });
+
+      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
+        method: 'GET',
+        headers: {
+          "Content-Type": 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      this.setState({ user: data });
+    } catch (error) {
+      toast.error(`An error occurred while making the request: ${error.message}`);
+      console.error('Error details:', error);
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
+
+
   columns = [
     { title: 'ID', accessor: 'id' },
-    { title: 'Username', accessor: 'username' },
+    {
+      title: 'Username',
+      accessor: 'username',
+      render: (row) => (
+        <div className="flex items-center gap-2">
+          <Avatar isBordered color="primary" src={row.image} className="w-10 h-10 text-large" />
+          <p>{row.username}</p>
+        </div>
+      )
+    },
     { title: 'Email', accessor: 'email' },
     { title: 'Full Name', accessor: 'full_name' },
-    { title: 'Role', accessor: 'role' },
-    { title: 'Active', accessor: 'is_active' },
-    { title: 'Created At', accessor: 'created_at' },
-    { title: 'Updated At', accessor: 'updated_at' },
-    { title: 'Action' } // Action column added
+    {
+      title: 'Role',
+      accessor: 'role',
+      render: (row) => (
+        <Chip size="sm" color="warning" className="text-white capitalize">
+          {row.role}
+        </Chip>
+      ),
+    },
+    {
+      title: 'Is Active',
+      accessor: 'is_active',
+      render: (row) => (
+        <Switch
+          isSelected={row.is_active}
+          color="primary"
+          size="sm"
+          onChange={async () => {
+            try {
+              await UserService.updateUserActiveStatus(row.id, !row.is_active);
+              this.setState((prevState) => {
+                ussers: prevState.users.map(user => {
+                  user.id === row.id ? { ...user, is_active: !user.is_active } : user;
+                });
+              })
+              toast.success(`User has been ${!row.is_active ? 'enabled' : 'disabled'} successfully!`);
+              this.fetchUsers();
+            } catch (error) {
+              console.error("Error updating user status:", error);
+              toast.error("Failed to update user status.");
+
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: 'Created At',
+      accessor: 'created_at',
+      render: (row) => this.humanize.format(row.created_at),
+    },
+    {
+      title: 'Updated At',
+      accessor: 'updated_at',
+      render: (row) => this.humanize.format(row.updated_at),
+
+    },
+    {
+      title: 'Action',
+      render: (row) => (
+        <div className="flex space-x-4">
+          <button
+            onClick={() => this.handleEditButton(row.id)}
+            className="font-medium text-blue-600 hover:underline"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => this.handleRemoveButton(row.id)}
+            className="font-medium text-red-600 hover:underline"
+          >
+            Remove
+          </button>
+        </div>
+      ),
+    },
   ];
 
   handleModalClick = () => {
@@ -56,6 +165,15 @@ class Page extends Component {
   handleModalClose = () => {
     this.setState({ isModalOpen: false });
   };
+
+  handleModalEditClose() {
+    this.setState({ isModalEditOpen: false });
+  }
+
+  handleEditButton(id) {
+    this.setState({ currentId: id, isModalEditOpen: true });
+    this.fetchUserById(id)
+  }
 
   handleRemoveButton = (id) => {
     this.setState({ currentId: id, isConfirmationModalOpen: true });
@@ -85,10 +203,8 @@ class Page extends Component {
     }
   }
 
-
-
   render() {
-    const { users, isModalOpen, isConfirmationModalOpen } = this.state;
+    const { users, isModalOpen, isModalEditOpen, isConfirmationModalOpen, loading } = this.state;
 
     return (
       <div>
@@ -121,6 +237,12 @@ class Page extends Component {
           handleGetUserList={this.fetchUsers}
         />
 
+        <EditUserComp
+          user={this.state.user}
+          isOpen={isModalEditOpen}
+          onClose={this.handleModalEditClose}
+        />
+
         <ConfirmationModal
           isOpen={isConfirmationModalOpen}
           onClose={this.closeConfirmationModal}
@@ -130,5 +252,3 @@ class Page extends Component {
     );
   }
 }
-
-export default Page;

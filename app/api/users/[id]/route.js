@@ -23,3 +23,36 @@ export async function DELETE(request, { params }) {
     })
   }
 }
+
+
+export async function GET(request, { params }) {
+  const { id } = params
+  try {
+    if (!id) {
+      return NextResponse.json(
+        { message: 'User ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const user = await UserModel.getUserById(id);
+
+    if (!user) {
+      return NextResponse.json(
+        { message: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        message: 'Failed to fetch user',
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}

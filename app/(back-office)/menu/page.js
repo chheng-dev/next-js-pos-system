@@ -1,14 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CategoryItem from "@/components/cateogry/CategoryItem";
 import { Button } from "@nextui-org/react";
-import TableItem from "@/components/cateogry/TableItem";
-import SpecialMenuItem from "@/components/cateogry/SpecailMenuItem";
 import { toast } from "react-hot-toast";
 import { Skeleton } from "@nextui-org/react";
 import dynamic from 'next/dynamic';
 
-const AddCategoryModal = dynamic(() => import('@/components/cateogry/AddCategoryModal'), { ssr: false });
+const AddCategoryModal = dynamic(() => import('@/components/cateogry/AddCategoryModal'), { ssr: true });
+const CategoryItem = dynamic(() => import('@/components/cateogry/CategoryItem'), { ssr: true });
+const TableItem = dynamic(() => import('@/components/cateogry/TableItem'), { ssr: true });
+const SpecialMenuItem = dynamic(() => import('@/components/cateogry/SpecailMenuItem'), { ssr: true });
+
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState(0);
@@ -16,7 +17,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
 
-  const handleTabClick = (index) => {
+const handleTabClick = (index) => {
     setActiveTab(index);
   };
 
