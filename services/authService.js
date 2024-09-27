@@ -1,6 +1,5 @@
 import axios from "axios";
 import bcrypt from "bcryptjs"
-import { UserModel } from "@/models/userModel";
 
 const API_URL_BASE = process.env.NEXT_PUBLIC_BASE_API_URL
 
@@ -33,7 +32,7 @@ export const authService = {
     }
   },
 
-  async register({ full_name, username, email, password, role, is_active, image }) {
+  async register({ full_name, username, email, password, is_active, image, roleId }) {
     try {
       // Hash the password
       const passwordHash = await bcrypt.hash(password, 10);
@@ -43,16 +42,32 @@ export const authService = {
         username,
         email,
         password: passwordHash,
-        role,
         is_active,
         image
       });
 
-      return res.data;
+      const createdUser = res.data;
+
+      if (!createdUser || !createdUser.id) {
+        throw new Error("User registration failed: Invalid response");
+      }
+
+      if (roleId) {
+        const roleResponse = await axios.post(`${API_URL_BASE}/api/users/${createdUser.id}/roles`, {
+          roleId
+        });
+
+        if (roleResponse.status !== 200) {
+          throw new Error("Role assignment failed");
+        }
+      }
+
+      return {
+        ...createdUser,
+        roleId
+      };
     } catch (error) {
       throw new Error(error.response?.data?.message || "User registration failed");
     }
   }
-
-
 }

@@ -13,28 +13,17 @@ export default function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
 
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   const res = await signIn("credentials", {
-  //     redirect: false,
-  //     username,
-  //     password,
-  //   });
-
-  //   if (res?.error) {
-  //     setError("Login failed. Please check your credentials.");
-  //     toast.error("Login failed!");
-  //   } else {
-  //     toast.success("Login successful!");
-  //     router.push('/dashboard');
-  //   }
-  // };
+  const router = useRouter();
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (!username.trim() || !password.trim()) {
+      toast.error("Please fill in both username and password.");
+      return
+    }
+
     try {
       const response = await fetch(`http://localhost:3000/api/auth/login`, {
         method: 'POST',
@@ -53,7 +42,7 @@ export default function Login() {
 
         document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60};`;
 
-        window.location.href = '/dashboard';
+        router.push("/dashboard");
       } else {
         console.error('Login failed:', data.message);
         toast.error("Login failed:", data.message);
@@ -81,7 +70,7 @@ export default function Login() {
   return (
     <div className="w-full h-screen">
       <div className="flex items-center justify-center h-full">
-        <div className="w-[30%]">
+        <div className="max-w-5xl">
           <h2 className="text-customPink-400 text-2xl text-center">COSYPOS</h2>
           <div className="bg-secondary-400 rounded-md mt-6 p-8">
             <h3 className="font-normal text-center text-xl">Login!</h3>
@@ -89,10 +78,8 @@ export default function Login() {
               Please enter your credentials below to continue
             </p>
 
-            {error && <p className="text-red-500 text-center my-2">{error}</p>}
-
             <div className="mt-4">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} onKeyPress={(e) => e.key === 'Enter' && handleSubmit(e)}>
                 <TextField
                   type="text"
                   label="Username"
@@ -100,7 +87,7 @@ export default function Login() {
                   name="username"
                   value={username}
                   onChange={handleInputChange}
-                  required
+                  isRequired={true}
                 />
 
                 <TextField
@@ -110,9 +97,9 @@ export default function Login() {
                   name="password"
                   value={password}
                   onChange={handleInputChange}
-                  required
                   isVisible={isPasswordVisible}
                   toggleVisibility={togglePasswordVisibility}
+                  isRequired={true}
                 />
 
                 <div className="flex items-center justify-between mt-3">

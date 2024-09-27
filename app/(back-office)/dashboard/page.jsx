@@ -1,9 +1,7 @@
 "use client"
-import SaleCard from '@/components/dashboard/SaleCard'
 import { ClipboardPlus, DollarSignIcon, HandPlatter } from 'lucide-react'
 import React from 'react'
 import Link from 'next/link'
-import PopularItem from '@/components/dashboard/PopularItem'
 
 import khmerFood from "../../../assets/images/images.jpeg"
 import baychha from "../../../assets/images/baychha.jpeg"
@@ -14,6 +12,9 @@ import hotDog from "../../../assets/images/hot-dog.jpg"
 import dynamic from 'next/dynamic';
 
 const MyChart = dynamic(() => import('../../../components/dashboard/MyChart'), { ssr: false });
+const PopularItem = dynamic(() => import('@/components/dashboard/PopularItem'), { ssr: true });
+const SaleCard = dynamic(() => import('@/components/dashboard/SaleCard'), { ssr: true });
+
 
 
 function page() {

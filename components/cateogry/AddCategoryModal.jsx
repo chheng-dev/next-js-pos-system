@@ -194,3 +194,6 @@ class AddCategoryModal extends Component {
 }
 
 export default AddCategoryModal;
+
+
+

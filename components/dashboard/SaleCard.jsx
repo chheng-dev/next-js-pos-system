@@ -1,5 +1,3 @@
-import { DollarSignIcon } from 'lucide-react'
-
 export default function SaleCard({title, icon, qty, date}) {
   const Icon = icon;
   return (
@@ -10,7 +8,7 @@ export default function SaleCard({title, icon, qty, date}) {
           <p className='lg:text-md font-semibold text-lg mt-2'>{qty}</p>
         </div>
         <div className='bg-customPrink-400 rounded-full lg:p-1 p-2'>
-          <Icon className='lg:w-3 lg:h-3 w-5 h-5 text-black' />
+          <Icon className='lg:w-6 lg:h-6 w-5 h-5 text-black' />
         </div>
       </div>
 

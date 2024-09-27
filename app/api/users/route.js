@@ -19,8 +19,8 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { full_name, username, email, password, role, is_active = true, image } = await request.json();
-    const newUser = await UserModel.createUser(full_name, username, email, password, role, is_active, image);
+    const { full_name, username, email, password, is_active = true, image } = await request.json();
+    const newUser = await UserModel.createUser(full_name, username, email, password, is_active, image);
 
     return NextResponse.json(newUser);
   } catch (error) {

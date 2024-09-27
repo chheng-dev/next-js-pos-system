@@ -13,16 +13,12 @@ import { Toaster } from "react-hot-toast";
 export default function Layout({ children }) {
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex gap-4 body-content">
-
         <Sidebar />
         <div className="w-full p-4 flex flex-col">
           <Header />
           <Providers>
-            <Suspense fallback={<Loading />}>
-              {children}
-            </Suspense>
+            {children}
           </Providers>
         </div>
       </div>

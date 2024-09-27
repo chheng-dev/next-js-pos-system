@@ -7,6 +7,8 @@ import { Button } from '@nextui-org/react';
 import { toast } from "react-hot-toast";
 import ImageInput from '../form/ImageInput';
 import { authService } from '@/services/authService';
+import { RoleService } from '@/services/roleService';
+import { UserService } from '@/services/userService';
 
 class CreateUserComp extends Component {
   constructor(props) {
@@ -19,75 +21,88 @@ class CreateUserComp extends Component {
       loading: false,
       imageUrl: '',
       loading: false,
-      password: ''
+      password: '',
+      rolesOption: [],
     };
     
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.uniqueId = `EZDrawer__checkbox${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  rolesOption = [
-    { value: "admin", label: "Admin" },
-    { value: "user", label: "User" }
-  ];
+  componentDidMount(){
+    this.fetchRoles();
+  }
+
+  async fetchRoles() {
+    try {
+      this.setState({ loading: true });
+
+      const roles = await RoleService.getAllRole();
+      const options = roles.map(item =>( {
+        id: item.id,
+        value: item.name,
+        label: item.name
+      }))
+      this.setState({ rolesOption: options });
+      console.log(options)
+
+    } catch (error) {
+      console.error("Failed to fetch roles:", error);
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
 
   async handleFormSubmit(e) {
     e.preventDefault();
-
+  
     const { full_name, username, email, selectedRole, password, imageUrl } = this.state;
-
-    
+  
     if (!full_name.trim() || !username.trim() || !email.trim() || !selectedRole) {
       toast.error('Please fill in all the required fields.');
       return;
     }
   
-
     const data = { 
       full_name, 
       username, 
       email, 
-      is_active: false, 
-      role: selectedRole, 
       password, 
-      imageUrl 
+      is_active: true, 
+      image: imageUrl,
+      roleId: selectedRole.id
     };  
-
-    
+  
     try {
       this.setState({ loading: true });
+      
+      const newUser = await authService.register(data);
+      
+      toast.success('User created successfully!');
+      
+      this.setState({
+        full_name: '',
+        username: '',
+        email: '',
+        selectedRole: '',
+        password: '',
+        imageUrl: null
+      });
   
-      const response = await authService.register(data);
+      this.props.onClose();
   
-      if (response.ok) {
-        toast.success('User created successfully!');
-  
-        this.setState({
-          full_name: '',
-          username: '',
-          email: '',
-          selectedRole: '',
-          password: '',
-          imageUrl: null
-        });
-  
-        this.props.onClose();
-  
-        if (this.props.handleGetUserList) {
-          this.props.handleGetUserList();
-        }
-      } else {
-        toast.error(`Something went wrong:)`);
+      if (this.props.handleGetUserList) {
+        this.props.handleGetUserList();
       }
+  
     } catch (error) {
       toast.error('An error occurred while making the request');
       console.error('Error details:', error);
     } finally {
       this.setState({ loading: false });
     }
-
   }
   
-
 
   handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -99,7 +114,7 @@ class CreateUserComp extends Component {
   };
 
   render() {
-    const { full_name, username, email, selectedRole, password, loading } = this.state;
+    const { full_name, username, email, selectedRole, password, loading, rolesOption } = this.state;
     const { isOpen, onClose } = this.props;
 
     return (
@@ -110,7 +125,7 @@ class CreateUserComp extends Component {
           direction='right' 
           className='max-w-full' 
           size="400px"
-          id="add user"
+          id={this.uniqueId}
         >
           <div className="container">
             <HeaderDrawer title="Add New User" onClick={onClose} />
@@ -149,20 +164,22 @@ class CreateUserComp extends Component {
                   label="Roles"
                   placeholder="Select Roles"
                   value={selectedRole}
-                  items={this.rolesOption}
+                  items={rolesOption}
                   onChange={value => this.handleSelectChange("selectedRole", value)}
                   isRequired={true}
                 />
 
-                <TextField
-                  type="password"
-                  label="Password"
-                  placeholder="Enter your password"
-                  name="password"
-                  value={password}
-                  onChange={this.handleInputChange}
-                  isRequired={true}
-                />
+                <div id='password' style={{position: 'relative', zIndex: 0}}>
+                  <TextField
+                    type="password"
+                    label="Password"
+                    placeholder="Enter your password"
+                    name="password"
+                    value={password}
+                    onChange={this.handleInputChange}
+                    isRequired={true}
+                  />
+                </div>
 
                 <ImageInput
                   label="Avatar"

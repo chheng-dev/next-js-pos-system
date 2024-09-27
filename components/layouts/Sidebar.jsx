@@ -1,5 +1,5 @@
 "use client"
-import { Book, DollarSign, Folder, LayoutDashboard, ListOrdered, LogOutIcon, UsersRound } from 'lucide-react'
+import { Book, DollarSign, Folder, LayoutDashboard, ListOrdered, LogOutIcon, Settings, UsersRound } from 'lucide-react'
 import { FaBoxOpen, FaUserPlus } from "react-icons/fa";
 
 import Link from 'next/link'
@@ -48,6 +48,11 @@ function Sidebar() {
       title: "Reservation",
       path: "/reservation",
       icon: Book
+    },
+    {
+      title: "Setting",
+      path: "/settings",
+      icon: Settings
     },
   ]
 
